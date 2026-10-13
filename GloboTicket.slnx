@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Src/">
+    <Project Path="GloboTicket.API/GloboTicket.API.csproj" />
+    <Project Path="GloboTicket.Application/GloboTicket.Application.csproj" />
+    <Project Path="GloboTicket.Domain/GloboTicket.Domain.csproj" />
+    <Project Path="GloboTicket.Infrastructure/GloboTicket.Infrastructure.csproj" />
+  </Folder>
+</Solution>

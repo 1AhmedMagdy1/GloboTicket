@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Contracts\Identity\" />
+    <Folder Include="Contracts\Infrastrucure\" />
+    <Folder Include="Features\Authentication\ConfirmEmail\" />
+    <Folder Include="Features\Authentication\ChangePassword\" />
+    <Folder Include="Features\Authentication\ResetPassword\" />
+    <Folder Include="Features\Authentication\Register\" />
+    <Folder Include="Features\DashBoards\SystemAdminDashBoard\" />
+    <Folder Include="Features\DashBoards\TenantDashBoard\" />
+    <Folder Include="Features\EventManagement\GetEvents\" />
+    <Folder Include="Features\EventManagement\AddEvent\" />
+    <Folder Include="Features\EventManagement\GetEventDetails\" />
+    <Folder Include="Features\EventManagement\DeleteEvent\" />
+    <Folder Include="Features\EventManagement\UpdateEvent\" />
+    <Folder Include="Features\UserManagement\GetUsers\" />
+    <Folder Include="Features\UserManagement\GetUserByID\" />
+    <Folder Include="Features\UserManagement\DeleteUser\" />
+    <Folder Include="Features\UserManagement\UpdateUser\" />
+    <Folder Include="Features\UserManagement\SuspendUser\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.2.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
+    <PackageReference Include="MediatR" Version="14.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GloboTicket.Domain\GloboTicket.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
