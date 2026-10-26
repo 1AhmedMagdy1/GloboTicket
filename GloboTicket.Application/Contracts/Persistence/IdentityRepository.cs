@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GloboTicket.Application.Contracts.Persistence
 {
-    internal class IdentityRepository
+    public interface IIdentityRepository
     {
     }
 }

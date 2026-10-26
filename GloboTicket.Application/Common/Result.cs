@@ -16,11 +16,12 @@ namespace GloboTicket.Application.Common
         public static Result<T> Success(T Data,ResultType code,string? message)
             =>new Result<T> { Data = Data,IsSuccess=true,Code=code,Message=message??"" };
     
-        public static Result<T> Failure(T Data,ResultType code,string? message,IEnumerable<ErrorResult> errors)
+        public static Result<T> Failure(T? Data,ResultType code,string? message,IEnumerable<ErrorResult> errors)
             =>new Result<T> { Data = Data,IsSuccess=false,Code=code,Message=message??"",Errors=errors };
     
-        public static OperationResult<T> ToOperationResult(Result<T> Result)=>new OperationResult<T>(Result);
-        
+        //public static OperationResult<T> ToOperationResult(Result<T> Result)=>new OperationResult<T>(Result);
+        public  OperationResult<T> ToOperationResult()=>new OperationResult<T>(this);
+       
     }
 
     public class ErrorResult
@@ -39,6 +40,7 @@ namespace GloboTicket.Application.Common
         Forbidden=403,
         Conflict=409,
         ServiceUnavailable=503,
-        InternalServerError=500
+        InternalServerError=500,
+        NotFound = 404,
     };
 }

@@ -19,7 +19,7 @@ namespace GloboTicket.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
         {
             services.AddDbContext<ApplicationDbContext>
-                (options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                (options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddOptions<JwtOptions>()
                 .Bind(configuration.GetSection(JwtOptions.SectionName));

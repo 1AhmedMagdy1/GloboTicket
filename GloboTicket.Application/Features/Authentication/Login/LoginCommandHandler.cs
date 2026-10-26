@@ -18,7 +18,7 @@ namespace GloboTicket.Application.Features.Authentication.Login
 
         public Task<LoginResponseDTO> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            
+            throw new NotImplementedException();
         }
     }
 }

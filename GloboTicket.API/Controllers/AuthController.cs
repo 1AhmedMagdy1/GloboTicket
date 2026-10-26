@@ -7,10 +7,10 @@ namespace GloboTicket.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login()
-        {
+        //[HttpPost("Login")]
+        //public async Task<IActionResult> Login()
+        //{
             
-        }
+        //}
     }
 }

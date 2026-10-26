@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\Identity\" />
     <Folder Include="Contracts\Infrastrucure\" />
     <Folder Include="Features\Authentication\ConfirmEmail\" />
     <Folder Include="Features\Authentication\ChangePassword\" />
@@ -20,7 +19,6 @@
     <Folder Include="Features\EventManagement\GetEventDetails\" />
     <Folder Include="Features\EventManagement\DeleteEvent\" />
     <Folder Include="Features\EventManagement\UpdateEvent\" />
-    <Folder Include="Features\UserManagement\GetUsers\" />
     <Folder Include="Features\UserManagement\GetUserByID\" />
     <Folder Include="Features\UserManagement\DeleteUser\" />
     <Folder Include="Features\UserManagement\UpdateUser\" />
