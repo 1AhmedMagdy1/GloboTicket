@@ -9,9 +9,9 @@ namespace GloboTicket.Application.Features.Authentication.Login
 {
     internal class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponseDTO>
     {
-        private readonly IdentityRepository identityRepository;
+        private readonly IIdentityRepository identityRepository;
 
-        public LoginCommandHandler(IdentityRepository identityRepository)
+        public LoginCommandHandler(IIdentityRepository identityRepository)
         {
             this.identityRepository = identityRepository;
         }

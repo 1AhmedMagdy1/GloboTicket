@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using GloboTicket.Application.Contracts.Persistence;
+using GloboTicket.Application.Contracts.Services;
 using GloboTicket.Infrastructure.Persistence;
 using GloboTicket.Infrastructure.Persistence.Identity;
 using GloboTicket.Infrastructure.Persistence.Identity.CustomValidator;
 using GloboTicket.Infrastructure.Persistence.Identity.TokenOptions;
+using GloboTicket.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +64,8 @@ namespace GloboTicket.Infrastructure
                 AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddPasswordValidator<CustomPasswordValidator>()
                 .AddDefaultTokenProviders();
+
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
         }
     }
