@@ -1,9 +1,12 @@
 ﻿using GloboTicket.Application.Common;
+using GloboTicket.Application.Contracts.Identity;
 using GloboTicket.Application.Contracts.Persistence;
+using GloboTicket.Application.Contracts.Services;
 using GloboTicket.Application.DTOS.UserManagement;
 using GloboTicket.Application.Features.UserManagement.GetUsers;
 using GloboTicket.Infrastructure.Persistence.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,39 +18,142 @@ namespace GloboTicket.Infrastructure.Persistence.Repositories
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly ICurrentUserService currentUserService;
 
-
-        public UserRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UserRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ICurrentUserService currentUserService)
         {
             _context = context;
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.currentUserService = currentUserService;
         }
 
-        public Task<UserInfo?> GetUserById(string uid, CancellationToken cancellationToken)
+
+        public async Task<Result<Pagination<UserInfo>>> GetUsersAsync(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-        }
+            var Query =  _context.Users.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                request.Search = request.Search.Trim();
+                Query = Query.Where(u => u.Email!.StartsWith(request.Search)||u.FirstName.StartsWith(request.Search));
+            }
+            if (request.IsSuspended.HasValue)
+                Query = Query.Where(u => u.IsSuspended == request.IsSuspended.Value);
+            if (request.Roles is not null)
+            {
+                var Roles = request.Roles.Select(r => r.ToString()).Distinct().ToList();
+                if (Roles is not null)
+                {
+                    var RolesList = await _context.Roles.Where(role => Roles.Contains(role.Name ?? "")).Select(r => r.Id).ToListAsync(cancellationToken);
 
-        public Task<Pagination<UserInfo>> GetUsersAsync(GetUsersQuery query, string actor, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+                    Query = Query.Where(u=>
+                        _context.UserRoles
+                        .Any(ur =>u.Id==ur.UserId &&RolesList.Contains(ur.RoleId)));
+                }
+            }
+                var TotalCount =await Query.CountAsync();
+                var QueryResult = await Query
+                    .OrderByDescending(o=>o.CreatedAt)
+                    .Skip((request.PageNumber - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Select(r => new
+                    {
+                        ID = r.Id,
+                        CreatedAt = r.CreatedAt,
+                        Email = r.Email,
+                        IsSuspended = r.IsSuspended,
+                        Roles = _context.UserRoles.Where(ur => ur.UserId == r.Id)
+                .Join(_context.Roles, ur => ur.RoleId, role => role.Id, (ur, role) => role.Name)
+                .ToList(),
+                    }).ToListAsync(cancellationToken);
 
-        public async Task<bool> HasRole(string uid, string Role, CancellationToken cancellationToken)
+                List<UserInfo> Users = QueryResult.Select(res=>new UserInfo
+                {
+                    ID=res.ID,
+                    Email=res.Email??"",
+                    CreatedAt=res.CreatedAt,
+                    IsSuspended=res.IsSuspended,
+                    Roles = res.Roles.Select(r=>Enum.Parse<SystemRolesEnum>(r!,true)).ToList()
+                }).ToList();
+
+                var Response = new Pagination<UserInfo>(request.PageNumber, request.PageSize, Users, TotalCount);
+
+                return Result<Pagination<UserInfo>>.Success(Response, ResultType.OK, "Users Retrieved Successfully");
+            }
+
+        
+
+        public async Task<Result<bool>> HasRole(string uid, string Role, CancellationToken cancellationToken)
         {
             var user =await userManager.FindByIdAsync(uid);
             if(user == null)
             {
-                return false;
+                return Result<bool>.Forbidden();
             }
-            return await userManager.IsInRoleAsync(user, Role);
+            var IsExists= await userManager.IsInRoleAsync(user, Role);
+            if (!IsExists)return Result<bool>.Forbidden();
+
+            return Result<bool>.Success(true,ResultType.OK);
+        }
+
+        public  async Task<Result<bool>> HasRoleAsync(string Role, CancellationToken cancellationToken)
+        {
+            var Userid = currentUserService.getCurrentUserId();
+            if (string.IsNullOrWhiteSpace(Userid))
+            {
+                return  Result<bool>.Forbidden();
+            }
+
+            return await HasRole(Userid, Role, cancellationToken);
         }
 
         public async Task<bool> IsuserExists(string uid, CancellationToken cancellationToken)
         {
             var user = await userManager.FindByIdAsync(uid);
             return user != null;
+        }
+
+        public async Task<Result<bool>> SuspendUserAsync(string uid, CancellationToken cancellationToken)
+        {
+           
+            throw new NotImplementedException();
+
+            
+        }
+
+        public Task<Result<bool>> UnSuspendUserAsync(string uid, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        async Task<Result<UserInfo>> IUserRepository.GetUserById(string uid, CancellationToken cancellationToken)
+        {
+
+
+            var user = await _context.Users.AsNoTracking().Select(u => new
+            {
+                ID = u.Id,
+                Email = u.Email,
+                CreatedAt = u.CreatedAt,
+                Roles = _context.UserRoles.Where(ur => ur.UserId == uid)
+                .Join(_context.Roles, ur => ur.RoleId, role => role.Id, (ur, role) => role.Name)
+                .ToList(),
+                IsSuspended = u.IsSuspended
+
+            }).FirstOrDefaultAsync(cancellationToken);
+
+            if (user is null)
+                return Result<UserInfo>.Failure(null, ResultType.NotFound, "User Not Found");
+
+            var RolesNames = user.Roles.Select(r => Enum.Parse<SystemRolesEnum>(r!,true)).ToList();
+            var Result = new UserInfo
+            {
+                ID = user.ID,
+                CreatedAt = user.CreatedAt,
+                Email = user.Email??"",
+                Roles = RolesNames
+            };
+            return Result<UserInfo>.Success(Result, ResultType.OK, "User Retrieved Successfully");
         }
     }
 }

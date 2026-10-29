@@ -9,6 +9,8 @@ namespace GloboTicket.Infrastructure.Persistence.Identity
     {
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
+        public DateTimeOffset CreatedAt { get; set;}
+        public bool IsSuspended { get; set; }
         public ICollection<SuspensionLog> SuspensionLogs { get; set; }
 
     }

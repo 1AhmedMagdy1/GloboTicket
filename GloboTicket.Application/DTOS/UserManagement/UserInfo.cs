@@ -11,6 +11,6 @@ namespace GloboTicket.Application.DTOS.UserManagement
         public string Email { get; set; } = string.Empty;
         public List<SystemRolesEnum> Roles { get; set; } = new List<SystemRolesEnum>();
         public DateTimeOffset CreatedAt { get; set; }
-        public List<SuspensionLogInfo> SuspensionLogs { get; set; } = new List<SuspensionLogInfo>();
+        public bool IsSuspended { get; set; }
     }
 }

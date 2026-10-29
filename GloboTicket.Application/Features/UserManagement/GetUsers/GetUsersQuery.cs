@@ -13,7 +13,7 @@ namespace GloboTicket.Application.Features.UserManagement.GetUsers
         public int PageNumber { get; init; } = 1;
         public int PageSize { get; init; } = 10;
         public string? Search { get; set; }//search by email or user name
-        public bool IsSuspended { get; set; }
+        public bool? IsSuspended { get; set; }
         public List<SystemRolesEnum>? Roles { get; set; }
     }
 }
