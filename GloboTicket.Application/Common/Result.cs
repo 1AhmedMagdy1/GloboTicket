@@ -5,15 +5,22 @@ using System.Text;
 
 namespace GloboTicket.Application.Common
 {
+    public interface IResultResponse
+    {
+        public bool IsSuccess { get; set; }
+        public ResultType Code { get; set; }
+        public string Message { get; set; } 
+        public ErrorResult? Error { get; set; }
+    }
   
-    public class Result<T>
+    public class Result<T>: IResultResponse
     {
         public T? Data { get; set; }
-        public bool  IsSuccess { get; set; }
-        public ResultType Code { get; set; }
+        public bool IsSuccess { get; set; }
+        public ResultType Code { get ; set; }
         public string Message { get; set; } = string.Empty;
-        public ErrorResult? Error { get; set; }
-    
+        public ErrorResult? Error { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public static Result<T> Success(T Data,ResultType code,string? message=null)
             =>new Result<T> { Data = Data,IsSuccess=true,Code=code,Message=message??"" };
     
@@ -23,6 +30,7 @@ namespace GloboTicket.Application.Common
         public static Result<T> NotFound(string? Message=null, ErrorResult? Error=null) => new Result<T> { IsSuccess = false,Code=ResultType.NotFound,Message=Message??"NotFound",Error=Error };
         public static Result<T> Forbidden(string? Message=null, ErrorResult? Error=null) => new Result<T> { IsSuccess = false,Code=ResultType.Forbidden,Message=Message?? "You Don't have Permission to access this Resource", Error=Error };
         public static Result<T> UnAuthorized(string? Message=null, ErrorResult? Error=null) => new Result<T> { IsSuccess = false,Code=ResultType.Authorization,Message=Message?? "UnAuthorized",Error=Error };
+        public static Result<T> Conflict(string? Message=null, ErrorResult? Error=null) => new Result<T> { IsSuccess = false,Code=ResultType.Conflict,Message=Message?? "The request conflicts with the current state of the resource.", Error=Error };
         
         public  OperationResult<T> ToOperationResult()=>new OperationResult<T>(this);
        

@@ -20,7 +20,6 @@
     <Folder Include="Features\EventManagement\DeleteEvent\" />
     <Folder Include="Features\EventManagement\UpdateEvent\" />
     <Folder Include="Features\UserManagement\DeleteUser\" />
-    <Folder Include="Features\UserManagement\UpdateUser\" />
   </ItemGroup>
 
   <ItemGroup>

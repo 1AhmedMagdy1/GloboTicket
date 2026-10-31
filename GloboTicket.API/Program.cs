@@ -1,7 +1,8 @@
 
+using GloboTicket.API.Services;
+using GloboTicket.Application.Contracts.Identity.Authorization.Behaviours;
 using GloboTicket.Application.Contracts.Services;
 using GloboTicket.Infrastructure;
-using GloboTicket.API.Services;
 namespace GloboTicket.API
 {
     public class Program
@@ -16,7 +17,11 @@ namespace GloboTicket.API
             builder.Services.AddHttpContextAccessor();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+            builder.Services.AddMediatR(cfg => {
+                cfg.RegisterServicesFromAssemblyContaining<Program>();
+
+                cfg.AddBehavior(typeof(AuthorizationBehaviour<,>));
+                });
 
             builder.Services.AddScoped<ICurrentUserService,CurrentUserService>();
             var app = builder.Build();

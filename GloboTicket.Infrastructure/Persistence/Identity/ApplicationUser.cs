@@ -11,7 +11,9 @@ namespace GloboTicket.Infrastructure.Persistence.Identity
         public string LastName { get; set; } = string.Empty;
         public DateTimeOffset CreatedAt { get; set;}
         public bool IsSuspended { get; set; }
+        public string? UserProfileID { get; set; }
         public ICollection<SuspensionLog> SuspensionLogs { get; set; }
+        public ICollection<PhoneNumbers> PhoneNumbers { get; set; }
 
     }
     public class PhoneNumbers
@@ -32,10 +34,10 @@ namespace GloboTicket.Infrastructure.Persistence.Identity
         public string SuspensionActorID { get; set; } = string.Empty;
         public ApplicationUser SuspensionActor { get; set; } = null!;
 
-        public string UnsuspensionActorID { get; set; } = string.Empty;
-        public ApplicationUser UnsuspensionActor { get; set; } = null!;
-        public DateTime SuspendedAt { get; set; }
-        public DateTime? UnsuspendedAt { get; set; }
+        public string? UnsuspensionActorID { get; set; } = string.Empty;
+        public ApplicationUser? UnsuspensionActor { get; set; } = null!;
+        public DateTimeOffset SuspendedAt { get; set; }
+        public DateTimeOffset? UnsuspendedAt { get; set; }
         public string Reason { get; set; } = string.Empty;
     }
 }
