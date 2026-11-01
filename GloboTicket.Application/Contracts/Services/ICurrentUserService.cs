@@ -7,5 +7,6 @@ namespace GloboTicket.Application.Contracts.Services
     public interface ICurrentUserService
     {
         public string? getCurrentUserId();
+        public int? GetCurrentUserTenantID(); 
     }
 }

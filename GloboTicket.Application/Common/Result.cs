@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentValidation.Results;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -60,4 +61,16 @@ namespace GloboTicket.Application.Common
         InternalServerError=500,
         NotFound = 404,
     };
+    public class ValidationErrorResult<T>
+    {
+        //public ValidationFailure Failure { get; set; }
+        //public ValidationErrorResult(T Type,ValidationFailure failure)
+        //{
+        //    Failure = failure;
+        //}
+        public static Result<T> Create( ValidationFailure failure)
+        {
+            return Result<T>.Failure(default, ResultType.Validation, failure.ErrorMessage, new ErrorResult(failure.ErrorCode, failure.ErrorMessage));
+        }
+    }
 }

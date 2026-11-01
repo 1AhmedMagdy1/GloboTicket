@@ -17,5 +17,11 @@ namespace GloboTicket.API.Services
             var userid = _httpContextAccessor?.HttpContext?.User.FindFirstValue("uid");
             return userid;
         }
+
+        public int? GetCurrentUserTenantID()
+        {
+            var TenantID=_httpContextAccessor?.HttpContext?.User.FindFirstValue("tid"); 
+            return int.TryParse(TenantID, out int result) ? result : null;
+        }
     }
 }
