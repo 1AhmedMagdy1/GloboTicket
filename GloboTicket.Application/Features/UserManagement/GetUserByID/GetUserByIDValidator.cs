@@ -15,7 +15,7 @@ namespace GloboTicket.Application.Features.UserManagement.GetUserByID
                 .WithMessage("User ID is Required")
                 .MaximumLength(50)
                 .WithErrorCode("user.ID.InvalidLength")
-                .WithMessage("User ID must not exceed 50 characters.")
+                .WithMessage("User ID must not exceed 50 characters.");
         }
     }
 }

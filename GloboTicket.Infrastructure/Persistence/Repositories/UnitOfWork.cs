@@ -14,9 +14,9 @@ namespace GloboTicket.Infrastructure.Persistence.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync(CancellationToken token)
         {
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(token);
         }
     }
 }

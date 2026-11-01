@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using GloboTicket.Application.Common;
+﻿using GloboTicket.Application.Common;
 using GloboTicket.Application.Contracts.Persistence;
 using GloboTicket.Application.DTOS.Categories;
 using GloboTicket.Application.Features.EventCategory.CreateCategory;
+using GloboTicket.Application.Features.EventCategory.DeleteCategory;
 using GloboTicket.Application.Features.EventCategory.GetCategories;
+using GloboTicket.Application.Features.EventCategory.UpdateCategories;
 using GloboTicket.Domain.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
 namespace GloboTicket.Infrastructure.Persistence.Repositories
 {
     public class CategoryRepository : ICategoryRepository
@@ -36,12 +39,25 @@ namespace GloboTicket.Infrastructure.Persistence.Repositories
             return Result<bool>.Success(true, ResultType.Created,"Category created successfully");
         }
 
-        public Task<Result<bool>> DeleteCategoryAsync()
+ 
+
+        public Task<Result<bool>> DeleteCategory(EventCategory category)
         {
-            throw new NotImplementedException();
+            _dbContext.EventCategories.Remove(category);
+            return Task.FromResult(Result<bool>.Success(true, ResultType.NoContent, "Category deleted successfully"));
         }
 
-      
+        public async Task<Result<EventCategory>> GetByIdAsync(int id, CancellationToken cancellationToken)
+        {
+            var category =await _dbContext.EventCategories.FirstOrDefaultAsync(c => c.ID == id, cancellationToken);
+            if(category is null)
+            {
+                var error = new ErrorResult("CATEGORY_NOT_FOUND", "The specified category does not exist.");
+              
+                return  Result<EventCategory>.NotFound(error.ErrorMessage, error);
+            }
+            return Result<EventCategory>.Success(category, ResultType.OK);
+        }
 
         public async Task<Result<Pagination<GetCategoriesDTO>>> GetCategoriesAsync(GetCategoriesQuery query,int? TenantID, CancellationToken cancellationToken)
         {
@@ -100,11 +116,13 @@ namespace GloboTicket.Infrastructure.Persistence.Repositories
             return Result<bool>.NotFound();
         }
 
-        public Task<Result<bool>> UpdateCategoryAsync()
+        public async Task<Result<bool>> UpdateCategory(EventCategory category, UpdateCategoryCommand request)
         {
-            throw new NotImplementedException();
+            
+            category.Name = request.Name;
+            category.Description = request.Description;
+            category.LogoID = request.LogoID;
+            return  Result<bool>.Success(true, ResultType.NoContent);
         }
-
-        
     }
 }

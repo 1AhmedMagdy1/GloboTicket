@@ -15,5 +15,30 @@ namespace GloboTicket.Domain.Entities
         public bool IsDeleted { get; set; }
         public string? LogoID { get; set; }
 
+        public  bool CouldUserUpdateCategory(int? tenantID,List<string> UserRoles)
+        {
+            if(IsSystem==true && tenantID == null&&UserRoles.Contains("SystemAdmin"))
+            
+                return true;
+            
+            else if(IsSystem == false && tenantID != null && UserRoles.Contains("TenantAdmin")&&this.TenantID==tenantID)
+            
+               return true;
+            
+         
+            return false;
+        }
+        public bool CouldUserDeleteCategory(int? tenantID, List<string> UserRoles)
+        {
+            if (IsSystem == true && tenantID == null && UserRoles.Contains("SystemAdmin"))
+
+                return true;
+
+            else if (IsSystem == false && tenantID != null && UserRoles.Contains("TenantAdmin") && this.TenantID == tenantID)
+
+                return true;
+
+            return false;
+        }
     }
 }

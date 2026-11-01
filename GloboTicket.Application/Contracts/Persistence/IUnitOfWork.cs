@@ -6,6 +6,6 @@ namespace GloboTicket.Application.Contracts.Persistence
 {
     public interface IUnitOfWork
     {
-        public Task SaveChangesAsync();
+        public Task SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

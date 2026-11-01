@@ -29,6 +29,17 @@ namespace GloboTicket.Infrastructure.Persistence.Repositories
             this.currentUserService = currentUserService;
         }
 
+        public async Task<Result<List<string>>> GetUserRolesAsync(string uid, CancellationToken cancellationToken)
+        {
+            var user = await userManager.FindByIdAsync(uid);
+            if (user == null)
+                return Result<List<string>>.NotFound();
+
+            var roles = await userManager.GetRolesAsync(user);
+            if(roles == null || !roles.Any())
+                return Result<List<string>>.NotFound();
+            return Result<List<string>>.Success(roles.ToList(), ResultType.OK);
+        }
 
         public async Task<Result<Pagination<UserInfo>>> GetUsersAsync(GetUsersQuery request, CancellationToken cancellationToken)
         {

@@ -19,7 +19,7 @@ namespace GloboTicket.Application.Contracts.Persistence
         public Task<Result<bool>> SuspendUserAsync(string uid,string Reason,string ActorID, CancellationToken cancellationToken);
         public Task<Result<bool>> UnSuspendUserAsync(string uid,string ActorID, CancellationToken cancellationToken);
         public Task<Result<bool>> UpdateUserAsync(UpdateUserCommand updateUserCommand, CancellationToken cancellationToken);
-
+        public Task<Result<List<string>>> GetUserRolesAsync(string uid, CancellationToken cancellationToken);
 
 
 
