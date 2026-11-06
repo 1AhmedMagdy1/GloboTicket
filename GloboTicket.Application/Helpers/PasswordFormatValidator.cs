@@ -6,6 +6,8 @@ namespace GloboTicket.Application.Helpers
 {
     public class PasswordFormatValidator
     {
+       public const string specialCharacters = "!@#$%^&*()-_+=[]{};:,.?";
+
         public static bool DoesPasswordHaveLowerCaseChar(string password)
         {
             foreach (char c in password)
@@ -20,12 +22,10 @@ namespace GloboTicket.Application.Helpers
 
             return false;
         }
-        public static bool DoesPasswordHaveSymbol(string password)
+        public static bool DoesPasswordHaveSpecialChar(string password)
         {
-            foreach (char c in password)
-                if (char.IsSymbol(c)) return true;
 
-            return false;
+            return password.Any(c => specialCharacters.Contains(c));
         }
 
         public static bool DoesPasswordHavedigit(string password)

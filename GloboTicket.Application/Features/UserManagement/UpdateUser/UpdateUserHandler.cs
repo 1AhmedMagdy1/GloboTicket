@@ -23,14 +23,14 @@ namespace GloboTicket.Application.Features.UserManagement.UpdateUser
         private readonly IUnitOfWork unitOfWork;
         public async Task<Result<bool>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            if(!await userRepository.IsuserExistsAsync(request.UserID,cancellationToken))
+            if(!await userRepository.ExistsByIDAsync(request.UserID,cancellationToken))
                 return Result<bool>.NotFound("User is Not Found", new ErrorResult("User.NotFound", "User is Not Found"));
 
             if (request.UserID != currentUserService.getCurrentUserId())
                 return Result<bool>.Forbidden();
             var UpdateResult = await userRepository.UpdateUserAsync(request,cancellationToken);
             if (UpdateResult.IsSuccess)
-                await unitOfWork.SaveChangesAsync();
+                await unitOfWork.SaveChangesAsync(cancellationToken);
             return UpdateResult;
         }
     }

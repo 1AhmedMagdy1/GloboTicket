@@ -13,7 +13,7 @@ namespace GloboTicket.Application.Contracts.Persistence
 {
     public interface ICategoryRepository
     {
-        public Task<Result<bool>> CreateCategoryAsync(CreateCategoryCommand command,int? TenantID);
+        public Task<Result<bool>> CreateCategory(CreateCategoryCommand command,int? TenantID);
         public Task<Result<Pagination<GetCategoriesDTO>>> GetCategoriesAsync(GetCategoriesQuery query,int? TenantID, CancellationToken cancellationToken);
         public Task<Result<bool>> UpdateCategory(EventCategory category, UpdateCategoryCommand request);
         public Task<Result<bool>> DeleteCategory(EventCategory category);

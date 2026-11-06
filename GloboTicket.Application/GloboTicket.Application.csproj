@@ -11,7 +11,6 @@
     <Folder Include="Features\Authentication\ConfirmEmail\" />
     <Folder Include="Features\Authentication\ChangePassword\" />
     <Folder Include="Features\Authentication\ResetPassword\" />
-    <Folder Include="Features\Authentication\Register\" />
     <Folder Include="Features\DashBoards\SystemAdminDashBoard\" />
     <Folder Include="Features\DashBoards\TenantDashBoard\" />
     <Folder Include="Features\EventManagement\GetEvents\" />

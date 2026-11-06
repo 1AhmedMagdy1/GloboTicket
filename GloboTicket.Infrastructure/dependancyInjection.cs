@@ -29,6 +29,7 @@ namespace GloboTicket.Infrastructure
             var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()??
              throw new InvalidOperationException(
                 "JWT configuration is missing.");
+           
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

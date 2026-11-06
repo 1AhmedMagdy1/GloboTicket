@@ -23,12 +23,12 @@ namespace GloboTicket.Application.Features.UserManagement.UnSuspendUser
 
         public async Task<Result<bool>> Handle(UnSuspendUserCommand request, CancellationToken cancellationToken)
         {
-            if(!await userRepository.IsuserExistsAsync(request.UserID,cancellationToken))
+            if(!await userRepository.ExistsByIDAsync(request.UserID,cancellationToken))
                 return  Result<bool>.NotFound("User is Not Found", new ErrorResult("User.NotFound", "User is Not Found"));
 
             var UnSuspendResult = await userRepository.UnSuspendUserAsync(request.UserID, currentUserService.getCurrentUserId()!, cancellationToken);
             if (UnSuspendResult.IsSuccess)
-               await unitOfWork.SaveChangesAsync();
+               await unitOfWork.SaveChangesAsync(cancellationToken);
             return UnSuspendResult;
         }
     }

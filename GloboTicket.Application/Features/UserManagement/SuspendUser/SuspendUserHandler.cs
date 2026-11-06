@@ -41,7 +41,7 @@ namespace GloboTicket.Application.Features.UserManagement.SuspendUser
 
                 }
                 //validate user exists
-                if (!await userRepository.IsuserExistsAsync(request.UserID, cancellationToken))
+                if (!await userRepository.ExistsByIDAsync(request.UserID, cancellationToken))
                     return Result<bool>.NotFound("User is Not Found", new ErrorResult("User.NotFound", "User is Not Found"));
 
                 //var IsSystemAdminUser = await userRepository.HasRoleAsync(SystemRolesEnum.SystemAdmin.ToString(), cancellationToken);
@@ -51,7 +51,7 @@ namespace GloboTicket.Application.Features.UserManagement.SuspendUser
                 var result = await userRepository.SuspendUserAsync(request.UserID, request.Reason,currentUserService.getCurrentUserId()!, cancellationToken);
                 if (result.IsSuccess)
                 {
-                    await unitOfWork.SaveChangesAsync();
+                    await unitOfWork.SaveChangesAsync(cancellationToken);
                 }
 
                 return result;

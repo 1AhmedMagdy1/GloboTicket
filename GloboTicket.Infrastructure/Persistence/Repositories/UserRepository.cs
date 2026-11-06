@@ -128,7 +128,7 @@ namespace GloboTicket.Infrastructure.Persistence.Repositories
             return await HasRole(Userid, Role, cancellationToken);
         }
 
-        public async Task<bool> IsuserExistsAsync(string uid, CancellationToken cancellationToken)
+        public async Task<bool> ExistsByIDAsync(string uid, CancellationToken cancellationToken)
         {
             var user = await userManager.FindByIdAsync(uid);
             return user != null;
@@ -219,6 +219,31 @@ namespace GloboTicket.Infrastructure.Persistence.Repositories
                 Roles = RolesNames
             };
             return Result<UserInfo>.Success(Result, ResultType.OK, "User Retrieved Successfully");
+        }
+
+        public Task<bool> ExistsByEmailAsync(string Email, CancellationToken cancellationToken)
+        {
+           return _context.Users.AnyAsync(u => u.Email == Email, cancellationToken);
+           
+        }
+
+        public async Task<Result<bool>> AddUserAsync(string FirstName, string LastName, string Email, string Password, int? TenantID, CancellationToken cancellationToken)
+        {
+           var user = new ApplicationUser
+           {
+               FirstName = FirstName,
+               LastName = LastName,
+               Email = Email,
+               UserName = Email,
+               TenantID = TenantID
+           };
+            var result = await userManager.CreateAsync(user, Password);
+            if (!result.Succeeded)
+            {
+                var errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
+                return  Result<bool>.Failure(false, ResultType.Validation, errorMessage);
+            }
+            return  Result<bool>.Success(true, ResultType.Created, "User created successfully");
         }
     }
 }

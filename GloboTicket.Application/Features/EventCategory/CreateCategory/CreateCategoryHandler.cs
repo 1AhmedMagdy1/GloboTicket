@@ -39,11 +39,11 @@ namespace GloboTicket.Application.Features.EventCategory.CreateCategory
                 return Result<bool>.Failure(false, ResultType.Conflict, "Category already exists", new ErrorResult("CategoryExists", "Category already exists"));
 
 
-            var result = await _categoryRepository.CreateCategoryAsync(request,_currentUserService.GetCurrentUserTenantID(), cancellationToken);
+            var result = await _categoryRepository.CreateCategory(request,_currentUserService.GetCurrentUserTenantID());
             if(result.IsSuccess)
             {
              
-               await unitOfWork.SaveChangesAsync();
+               await unitOfWork.SaveChangesAsync(cancellationToken);
             }
             return result;
         }

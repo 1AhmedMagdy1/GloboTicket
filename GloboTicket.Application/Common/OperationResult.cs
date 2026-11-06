@@ -17,7 +17,7 @@ namespace GloboTicket.Application.Common
             this.IsSuccess = result.IsSuccess;
             this.Data = result.Data;
             this.Message = result.Message;
-            this.ErrorCode = result?.Errors?.FirstOrDefault()?.ErrorCode??"Invalid Request";
+            this.ErrorCode = result?.Error?.ErrorCode??"Invalid Request";
             this.StatusCode = (int)result.Code;
         }
 

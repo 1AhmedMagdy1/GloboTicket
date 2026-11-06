@@ -14,6 +14,7 @@ namespace GloboTicket.Infrastructure.Persistence.Identity
         public string? UserProfileID { get; set; }
         public ICollection<SuspensionLog> SuspensionLogs { get; set; }
         public ICollection<PhoneNumbers> PhoneNumbers { get; set; }
+        public int? TenantID { get; set; }
 
     }
     public class PhoneNumbers

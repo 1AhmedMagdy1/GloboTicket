@@ -27,6 +27,7 @@ namespace GloboTicket.Infrastructure.Persistence
         public virtual DbSet<EventCategory> EventCategories => Set<EventCategory>();
         public virtual DbSet<PhoneNumbers> PhoneNumbers => Set<PhoneNumbers>();
         public virtual DbSet<SuspensionLog>SuspensionLogs { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     }
 }

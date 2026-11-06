@@ -1,8 +1,4 @@
 ﻿using GloboTicket.Application.Contracts.Identity;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace GloboTicket.Application.DTOS.UserManagement
 {
     public class UserInfo
@@ -12,5 +8,7 @@ namespace GloboTicket.Application.DTOS.UserManagement
         public List<SystemRolesEnum> Roles { get; set; } = new List<SystemRolesEnum>();
         public DateTimeOffset CreatedAt { get; set; }
         public bool IsSuspended { get; set; }
+        public bool IsEmailConfirmed { get; set; }
+        public int? TenantID { get; set; }
     }
 }
