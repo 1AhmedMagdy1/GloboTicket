@@ -4,10 +4,12 @@ using GloboTicket.Application.Contracts.Persistence;
 using GloboTicket.Application.Contracts.Services;
 using GloboTicket.Application.DTOS.UserManagement;
 using GloboTicket.Application.Features.Authentication.CustomerRegister;
+using GloboTicket.Application.Features.Authentication.Login;
 using GloboTicket.Infrastructure.Persistence.Identity;
 using GloboTicket.Infrastructure.Persistence.Identity.TokenOptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -25,6 +27,7 @@ namespace GloboTicket.Infrastructure.Persistence.Services
         private readonly IUserRepository _userRepository;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IOptions<JwtOptions> jwtSettings;
+   
         private readonly ApplicationDbContext context;
         public AuthService(IUserRepository userRepository, UserManager<ApplicationUser> userManager, IOptions<JwtOptions> jwtSettings, ApplicationDbContext context)
         {
@@ -101,6 +104,51 @@ namespace GloboTicket.Infrastructure.Persistence.Services
                 return false;
             }
             return await userManager.CheckPasswordAsync(user, password);
+        }
+
+        public async Task<Result<LogincommandResult>> RefreshToken(string HasToken, CancellationToken cancellationToken)
+        {
+           
+           
+
+          var RefreshTokenEntity= await context.RefreshTokens.FirstOrDefaultAsync(r => r.TokenHash == HasToken);
+
+            if(RefreshTokenEntity is null)
+                return Result<LogincommandResult>.UnAuthorized();
+
+            RefreshTokenEntity.RevokedAt = DateTimeOffset.UtcNow;//Revoke the current refresh token
+
+            //generate new refresh token
+            var userInfo =await _userRepository.GetUserById(RefreshTokenEntity.UserID, cancellationToken);
+
+            if(!userInfo.IsSuccess)
+                return Result<LogincommandResult>.UnAuthorized();
+
+            var accessToken =await GenerateJwtToken(userInfo.Data!, cancellationToken);
+
+            var RefreshTokenResult = await AddRefreshTokenAsync(RefreshTokenEntity.UserID, cancellationToken);
+            if(RefreshTokenResult is null)
+                return Result<LogincommandResult>.UnAuthorized();
+
+            var result = new LogincommandResult
+            {
+                Uid = userInfo.Data!.ID,
+                AccessToken = accessToken,
+                RefreshToken = RefreshTokenResult.Item1,
+                RefreshTokenExpirationDate = RefreshTokenResult.Item2,
+                Roles = userInfo.Data.Roles.Select(r => r.ToString()).ToList()
+            };
+           
+            return Result<LogincommandResult>.Success(result,ResultType.OK, "Token Refreshed Successfully");
+        }
+
+        public async Task<Result<bool>> RevokeRefreshTokenAsync(string HashToken, CancellationToken cancellationToken = default)
+        {
+            var RefreshTokenEntity = await context.RefreshTokens.FirstAsync(r => r.TokenHash == HashToken);
+            if (RefreshTokenEntity is null)
+                return Result<bool>.UnAuthorized();
+            RefreshTokenEntity.RevokedAt = DateTimeOffset.UtcNow;
+            return Result<bool>.Success(true,ResultType.OK);
         }
     }
 }
